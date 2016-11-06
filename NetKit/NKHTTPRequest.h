@@ -10,4 +10,6 @@
 
 @interface NKHTTPRequest : NSObject
 
+
+
 @end

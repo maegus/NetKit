@@ -10,6 +10,7 @@
 		7253B02E1DCF0CE90002A147 /* NKHTTPKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7253B02D1DCF0CE90002A147 /* NKHTTPKit.h */; };
 		7253B0311DCF0D050002A147 /* NKHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7253B02F1DCF0D050002A147 /* NKHTTPRequest.h */; };
 		7253B0321DCF0D050002A147 /* NKHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7253B0301DCF0D050002A147 /* NKHTTPRequest.m */; };
+		7253B0341DCF0DEC0002A147 /* NKHTTPRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7253B0331DCF0DEC0002A147 /* NKHTTPRequestTests.m */; };
 		72C55E811DC098A6005A474B /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72C55E771DC098A6005A474B /* NetKit.framework */; };
 		72C55E861DC098A6005A474B /* NetKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 72C55E851DC098A6005A474B /* NetKitTests.m */; };
 		72C55E881DC098A6005A474B /* NetKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C55E7A1DC098A6005A474B /* NetKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -29,6 +30,7 @@
 		7253B02D1DCF0CE90002A147 /* NKHTTPKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NKHTTPKit.h; path = HTTP/NKHTTPKit.h; sourceTree = "<group>"; };
 		7253B02F1DCF0D050002A147 /* NKHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NKHTTPRequest.h; sourceTree = "<group>"; };
 		7253B0301DCF0D050002A147 /* NKHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NKHTTPRequest.m; sourceTree = "<group>"; };
+		7253B0331DCF0DEC0002A147 /* NKHTTPRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NKHTTPRequestTests.m; sourceTree = "<group>"; };
 		72C55E771DC098A6005A474B /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72C55E7A1DC098A6005A474B /* NetKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetKit.h; sourceTree = "<group>"; };
 		72C55E7B1DC098A6005A474B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				72C55E851DC098A6005A474B /* NetKitTests.m */,
+				7253B0331DCF0DEC0002A147 /* NKHTTPRequestTests.m */,
 				72C55E871DC098A6005A474B /* Info.plist */,
 			);
 			path = NetKitTests;
@@ -222,6 +225,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7253B0341DCF0DEC0002A147 /* NKHTTPRequestTests.m in Sources */,
 				72C55E861DC098A6005A474B /* NetKitTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
