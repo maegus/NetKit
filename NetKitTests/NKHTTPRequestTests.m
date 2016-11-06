@@ -7,6 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "NKHTTPRequest.h"
+#import "NKSocketStream.h"
 
 @interface NKHTTPRequestTests : XCTestCase
 
@@ -16,12 +18,23 @@
 
 - (void)setUp {
     [super setUp];
-    NSURLRequest
 }
 
 - (void)tearDown {
     [super tearDown];
 }
 
+- (void)testExample {
+    XCTestExpectation *exception = [self expectationWithDescription:@"testExample"];
+    NKHTTPRequest *request = [[NKHTTPRequest alloc] initWithURL:@"http://www.baidu.com/index.html"];
+
+    [NKSocketStream sendRequest:request
+                     completion:^(NSData *data) {
+                         [exception fulfill];
+                     }];
+    NSLog(@"%@", request.rawValue);
+
+    [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
 
 @end

@@ -18,6 +18,8 @@ typedef NS_ENUM(NSUInteger, NKHTTPRequestMethod) {
 
 @interface NKHTTPRequest : NSObject
 
+- (instancetype)initWithURL:(NSString *)urlString NS_DESIGNATED_INITIALIZER;
+
 @property (nonatomic, strong) NSString *method;
 
 @property (nonatomic, strong) NSString *url;
@@ -27,6 +29,8 @@ typedef NS_ENUM(NSUInteger, NKHTTPRequestMethod) {
 @property (nonatomic, strong) NSDictionary *headers;
 
 @property (nonatomic, strong, readonly) NSString *host;
+
+@property (nonatomic, strong, readonly) NSNumber *port;
 
 @property (nonatomic, strong, readonly) NSString *resource;
 

@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NKHTTPRequest.h"
 
 @interface NKSocketStream : NSObject
+
++ (void)sendRequest:(NKHTTPRequest *)request
+         completion:(void(^)(NSData *))completion;
 
 @end

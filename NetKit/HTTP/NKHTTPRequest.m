@@ -16,6 +16,13 @@
 
 @implementation NKHTTPRequest
 
+- (instancetype)init {
+    if (self = [self initWithURL:@""]) {
+    }
+    NSAssert(NO, @"Invalid initializer use -initWithURL instead.");
+    return self;
+}
+
 - (instancetype)initWithURL:(NSString *)urlString {
     if (self = [super init]) {
         _version = @1.1;
@@ -23,9 +30,13 @@
         _url = urlString;
 
         NSURL *url = [NSURL URLWithString:urlString];
-
+        _port = url.port ?: @80;
         _host = url.host;
-        _resource = url.relativePath ?: @"/";
+        _resource = url.relativePath.length > 0 ? url.relativePath : @"/";
+
+        _headers = [[NSMutableDictionary alloc] init];
+
+        [_headers setValue:_host forKey:@"Host"];
     }
     return self;
 }
