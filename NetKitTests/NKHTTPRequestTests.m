@@ -16,6 +16,7 @@
 
 - (void)setUp {
     [super setUp];
+    NSURLRequest
 }
 
 - (void)tearDown {

@@ -1,5 +1,5 @@
 //
-//  NKHTTPRequest.h
+//  NKHTTPClient.h
 //  NetKit
 //
 //  Created by Draveness on 11/6/16.
@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NKHTTPRequest : NSObject
-
-
+@interface NKHTTPClient : NSObject
 
 @end
