@@ -7,7 +7,18 @@
 //
 
 #import "NKHTTPClient.h"
+#import "NKHTTPRequest.h"
+#import "NKSocketStream.h"
 
 @implementation NKHTTPClient
+
+- (NKHTTPClient *(^)(NKHTTPRequest *))newCall {
+    return ^(NKHTTPRequest *request) {
+        NKSocketStream *socket = [[NKSocketStream alloc] initWithHost:request.host port:request.port];
+        [socket write:request.rawValue.UTF8String];
+        NSLog(@"%@", [socket read]);
+        return self;
+    };
+}
 
 @end

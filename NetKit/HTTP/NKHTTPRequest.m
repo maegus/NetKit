@@ -27,12 +27,10 @@
     if (self = [super init]) {
         _version = @1.1;
         _method = @"GET";
-        _url = urlString;
-
-        NSURL *url = [NSURL URLWithString:urlString];
-        _port = url.port ?: @80;
-        _host = url.host;
-        _resource = url.relativePath.length > 0 ? url.relativePath : @"/";
+        _url = [NSURL URLWithString:urlString];
+        _port = _url.port ?: @80;
+        _host = _url.host;
+        _resource = _url.relativePath.length > 0 ? _url.relativePath : @"/";
 
         _headers = [[NSMutableDictionary alloc] init];
 

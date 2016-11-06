@@ -8,52 +8,57 @@
 
 #import "NKSocketStream.h"
 
-#include <unistd.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netdb.h>
+
+@interface NKSocketStream ()
+
+@property (nonatomic, assign) int sockfd;
+
+@end
 
 @implementation NKSocketStream
 
 NSInteger const NKSocketStreamBufferSize = 100 * 1024;
 
-+ (void)sendRequest:(NKHTTPRequest *)request completion:(void (^)(NSData *))completion {
+- (instancetype)initWithHost:(NSString *)host port:(NSNumber *)port {
+    if (self = [super init]) {
+        if ( (_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+            NSLog(@"socket error");
 
-    int sockfd = 0;
-    if ( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        NSLog(@"socket error");
+        struct addrinfo hints, *res;
 
-    struct addrinfo hints, *res;
-
-    bzero(&hints, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-
-    getaddrinfo(request.host.UTF8String, request.port.stringValue.UTF8String, &hints, &res);
-    connect(sockfd, res->ai_addr, res->ai_addrlen);
-
-    const char *requestData = [request.rawValue UTF8String];
-    write(sockfd, requestData, strlen(requestData));
-
-    char buf[NKSocketStreamBufferSize];
-    ssize_t total = 0, byte_count = 0;
-
-    char *pointer = buf;
-
-    byte_count = read(sockfd, pointer, NKSocketStreamBufferSize - total - 1);
-
-    total += byte_count;
-    pointer += byte_count;
-    buf[total] = 0;
+        bzero(&hints, sizeof(hints));
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
 
 
-    close(sockfd);
+        getaddrinfo(host.UTF8String, port.stringValue.UTF8String, &hints, &res);
+        if (connect(_sockfd, res->ai_addr, res->ai_addrlen) < 0) {
+            NSLog(@"connect error %d", errno);
 
-    NSLog(@"%@", [NSString stringWithUTF8String:buf]);
+        }
 
-    NSData *returnData = [NSData dataWithBytes:buf length:total];
+    }
+    return self;
+}
 
-    completion(returnData);
+- (void)write:(const char *)data {
+    write(_sockfd, data, strlen(data));
+}
+
+- (NSString *)read {
+    const char *buffer[NKSocketStreamBufferSize];
+    NSInteger count = 0;
+    if ( (count = read(_sockfd, buffer, sizeof(buffer))) < 0) {
+        NSLog(@"read error %d", errno);
+    }
+    return [NSString stringWithUTF8String:buffer];
+}
+
+- (void)close {
+    close(_sockfd);
 }
 
 @end

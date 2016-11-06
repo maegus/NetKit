@@ -9,9 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "NKHTTPRequest.h"
 
+#include <unistd.h>
+
 @interface NKSocketStream : NSObject
 
-+ (void)sendRequest:(NKHTTPRequest *)request
-         completion:(void(^)(NSData *))completion;
+- (instancetype)initWithHost:(NSString *)host port:(NSNumber *)port NS_DESIGNATED_INITIALIZER;
+
+- (void)write:(const char *)data;
+
+- (NSString *)read;
+
+- (void)close;
 
 @end

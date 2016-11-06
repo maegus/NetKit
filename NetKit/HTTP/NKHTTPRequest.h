@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, NKHTTPRequestMethod) {
 
 @property (nonatomic, strong) NSString *method;
 
-@property (nonatomic, strong) NSString *url;
+@property (nonatomic, strong) NSURL *url;
 
 @property (nonatomic, strong) NSData *body;
 

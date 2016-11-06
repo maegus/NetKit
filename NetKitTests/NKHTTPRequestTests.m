@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "NKHTTPRequest.h"
-#import "NKSocketStream.h"
+#import "NKHTTPClient.h"
 
 @interface NKHTTPRequestTests : XCTestCase
 
@@ -28,11 +28,8 @@
     XCTestExpectation *exception = [self expectationWithDescription:@"testExample"];
     NKHTTPRequest *request = [[NKHTTPRequest alloc] initWithURL:@"http://www.baidu.com/index.html"];
 
-    [NKSocketStream sendRequest:request
-                     completion:^(NSData *data) {
-                         [exception fulfill];
-                     }];
-    NSLog(@"%@", request.rawValue);
+    NKHTTPClient *client = [[NKHTTPClient alloc] init];
+    client.newCall(request);
 
     [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }

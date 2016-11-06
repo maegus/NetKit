@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class NKHTTPRequest;
+
 @interface NKHTTPClient : NSObject
+
+- (NKHTTPClient *(^)(NKHTTPRequest *request))newCall;
 
 @end
