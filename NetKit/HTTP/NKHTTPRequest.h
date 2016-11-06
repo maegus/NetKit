@@ -30,6 +30,8 @@ typedef NS_ENUM(NSUInteger, NKHTTPRequestMethod) {
 
 @property (nonatomic, strong, readonly) NSString *resource;
 
+@property (nonatomic, strong, readonly) NSString *rawValue;
+
 @end
 
 NS_ASSUME_NONNULL_END

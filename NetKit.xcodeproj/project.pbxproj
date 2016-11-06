@@ -13,6 +13,10 @@
 		72A3443E1DCF194E009579A4 /* NKHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 72A3443C1DCF194E009579A4 /* NKHTTPClient.m */; };
 		72A344411DCF1960009579A4 /* NKHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A3443F1DCF1960009579A4 /* NKHTTPRequest.h */; };
 		72A344421DCF1960009579A4 /* NKHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 72A344401DCF1960009579A4 /* NKHTTPRequest.m */; };
+		72A344681DCF23C8009579A4 /* NKSocketStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A344661DCF23C8009579A4 /* NKSocketStream.h */; };
+		72A344691DCF23C8009579A4 /* NKSocketStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 72A344671DCF23C8009579A4 /* NKSocketStream.m */; };
+		72A3446C1DCF256D009579A4 /* NKHTTPMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72A3446A1DCF256D009579A4 /* NKHTTPMessage.h */; };
+		72A3446D1DCF256D009579A4 /* NKHTTPMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 72A3446B1DCF256D009579A4 /* NKHTTPMessage.m */; };
 		72C55E811DC098A6005A474B /* NetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72C55E771DC098A6005A474B /* NetKit.framework */; };
 		72C55E861DC098A6005A474B /* NetKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 72C55E851DC098A6005A474B /* NetKitTests.m */; };
 		72C55E881DC098A6005A474B /* NetKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C55E7A1DC098A6005A474B /* NetKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -35,6 +39,10 @@
 		72A3443C1DCF194E009579A4 /* NKHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NKHTTPClient.m; path = HTTP/NKHTTPClient.m; sourceTree = "<group>"; };
 		72A3443F1DCF1960009579A4 /* NKHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NKHTTPRequest.h; path = HTTP/NKHTTPRequest.h; sourceTree = "<group>"; };
 		72A344401DCF1960009579A4 /* NKHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NKHTTPRequest.m; path = HTTP/NKHTTPRequest.m; sourceTree = "<group>"; };
+		72A344661DCF23C8009579A4 /* NKSocketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NKSocketStream.h; sourceTree = "<group>"; };
+		72A344671DCF23C8009579A4 /* NKSocketStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NKSocketStream.m; sourceTree = "<group>"; };
+		72A3446A1DCF256D009579A4 /* NKHTTPMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NKHTTPMessage.h; sourceTree = "<group>"; };
+		72A3446B1DCF256D009579A4 /* NKHTTPMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NKHTTPMessage.m; sourceTree = "<group>"; };
 		72C55E771DC098A6005A474B /* NetKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72C55E7A1DC098A6005A474B /* NetKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetKit.h; sourceTree = "<group>"; };
 		72C55E7B1DC098A6005A474B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -70,6 +78,8 @@
 				72A344401DCF1960009579A4 /* NKHTTPRequest.m */,
 				72A3443B1DCF194E009579A4 /* NKHTTPClient.h */,
 				72A3443C1DCF194E009579A4 /* NKHTTPClient.m */,
+				72A3446A1DCF256D009579A4 /* NKHTTPMessage.h */,
+				72A3446B1DCF256D009579A4 /* NKHTTPMessage.m */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -97,6 +107,8 @@
 			children = (
 				7253B02C1DCF0CC00002A147 /* HTTP */,
 				72C55E7A1DC098A6005A474B /* NetKit.h */,
+				72A344661DCF23C8009579A4 /* NKSocketStream.h */,
+				72A344671DCF23C8009579A4 /* NKSocketStream.m */,
 				72C55E7B1DC098A6005A474B /* Info.plist */,
 			);
 			path = NetKit;
@@ -119,8 +131,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72A344681DCF23C8009579A4 /* NKSocketStream.h in Headers */,
 				72A3443D1DCF194E009579A4 /* NKHTTPClient.h in Headers */,
 				7253B02E1DCF0CE90002A147 /* NKHTTPKit.h in Headers */,
+				72A3446C1DCF256D009579A4 /* NKHTTPMessage.h in Headers */,
 				72C55E881DC098A6005A474B /* NetKit.h in Headers */,
 				72A344411DCF1960009579A4 /* NKHTTPRequest.h in Headers */,
 			);
@@ -224,8 +238,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72A3446D1DCF256D009579A4 /* NKHTTPMessage.m in Sources */,
 				72A344421DCF1960009579A4 /* NKHTTPRequest.m in Sources */,
 				72A3443E1DCF194E009579A4 /* NKHTTPClient.m in Sources */,
+				72A344691DCF23C8009579A4 /* NKSocketStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
