@@ -33,7 +33,6 @@ NSInteger const NKSocketStreamBufferSize = 100 * 1024;
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_STREAM;
 
-
         getaddrinfo(host.UTF8String, port.stringValue.UTF8String, &hints, &res);
         if (connect(_sockfd, res->ai_addr, res->ai_addrlen) < 0) {
             NSLog(@"connect error %d", errno);
@@ -49,7 +48,7 @@ NSInteger const NKSocketStreamBufferSize = 100 * 1024;
 }
 
 - (NSString *)read {
-    const char *buffer[NKSocketStreamBufferSize];
+    char buffer[NKSocketStreamBufferSize];
     NSInteger count = 0;
     if ( (count = read(_sockfd, buffer, sizeof(buffer))) < 0) {
         NSLog(@"read error %d", errno);
