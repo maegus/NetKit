@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#import "NKAssert.h"
 
 @interface NKSocketStream ()
 
@@ -21,6 +22,11 @@
 @implementation NKSocketStream
 
 NSInteger const NKSocketStreamBufferSize = 100 * 1024;
+
+- (instancetype)init {
+    NKThrowException(@"Use `-initWithHost:port:` to initialize NKSocketStream.");
+    return [self initWithHost:nil port:nil];
+}
 
 - (instancetype)initWithHost:(NSString *)host port:(NSNumber *)port {
     if (self = [super init]) {
@@ -36,7 +42,6 @@ NSInteger const NKSocketStreamBufferSize = 100 * 1024;
         getaddrinfo(host.UTF8String, port.stringValue.UTF8String, &hints, &res);
         if (connect(_sockfd, res->ai_addr, res->ai_addrlen) < 0) {
             NSLog(@"connect error %d", errno);
-
         }
 
     }
