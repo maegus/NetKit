@@ -8,18 +8,18 @@
 
 #import "NKHTTPMessage.h"
 
-@interface NKHTTPMessageHelper: NSObject
+@interface NKHTTPHelper: NSObject
 
 @end
 
-@implementation NKHTTPMessageHelper
+@implementation NKHTTPHelper
 
 + (NSString *)nextLine:(NSString *)message {
-    return [NKHTTPMessageHelper scanUpToString:@"\r\n\r\n" fromString:message];
+    return [NKHTTPHelper scanUpToString:@"\r\n" fromString:message];
 }
 
 + (NSString *)httpHeader:(NSString *)message {
-    return [NKHTTPMessageHelper scanUpToString:@"\r\n\r\n" fromString:message];
+    return [NKHTTPHelper scanUpToString:@"\r\n\r\n" fromString:message];
 }
 
 + (NSString *)scanUpToString:(NSString *)upToString fromString:(NSString *)message {
@@ -40,7 +40,7 @@
 @property (nonatomic, strong) NSNumber *statusCode;
 @property (nonatomic, strong) NSString *reasonMessage;
 
-@property (nonatomic, strong) NSString *httpHeader;
+@property (nonatomic, strong) NSString *rawHTTPHeader;
 
 @end
 
@@ -57,14 +57,34 @@
 - (void)appendMessage:(NSString *)message {
     [self.plainMessage appendString:message];
 
-    if (self.httpHeader) {
-        NSLog(@"%@", self.httpHeader);
+    if (self.rawHTTPHeader) {
         [self parseHTTPHeader];
     }
 }
 
 - (void)parseHTTPHeader {
+    NSString *rawHTTPHeader = [self.rawHTTPHeader copy];
 
+    // start-line, ex: HTTP/1.1 200 OK
+    NSString *startLine = [NKHTTPHelper scanUpToString:@"\r\n" fromString:rawHTTPHeader];
+    NSLog(@"start-line: %@", startLine);
+
+    // header-field
+    rawHTTPHeader = [rawHTTPHeader substringFromIndex:startLine.length];
+    NSArray *headerFields = [[NKHTTPHelper scanUpToString:@"\r\n\r\n" fromString:rawHTTPHeader] componentsSeparatedByString:@"\r\n"];
+    NSLog(@"header-fields: %@", headerFields);
+
+    for (NSString *headerField in headerFields) {
+        NSString *fieldName = [NKHTTPHelper scanUpToString:@":" fromString:headerField];
+
+        // Add 1 to remove previous colon.
+        NSString *fieldValue = [headerField substringFromIndex:fieldName.length + 1];
+
+        // remove leading and trailing OWS in field value.
+        fieldValue = [fieldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        NSLog(@"field-name:\t%@", fieldName);
+        NSLog(@"field-value:\t%@", fieldValue);
+    }
 }
 
 - (NSString *)nextLine {
@@ -81,11 +101,11 @@
     return result;
 }
 
-- (NSString *)httpHeader {
-    if (!_httpHeader) {
-        _httpHeader = [NKHTTPMessageHelper httpHeader:self.plainMessage];
+- (NSString *)rawHTTPHeader {
+    if (!_rawHTTPHeader) {
+        _rawHTTPHeader = [NKHTTPHelper httpHeader:self.plainMessage];
     }
-    return _httpHeader;
+    return _rawHTTPHeader;
 }
 
 @end
