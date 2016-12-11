@@ -10,4 +10,6 @@
 
 @interface NKHTTPResponse : NSObject
 
+- (void)appendMessage:(NSString *)message;
+
 @end
