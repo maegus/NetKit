@@ -10,4 +10,6 @@
 
 @interface NKHTTPMessage : NSObject
 
+- (void)appendMessage:(NSString *)message;
+
 @end
