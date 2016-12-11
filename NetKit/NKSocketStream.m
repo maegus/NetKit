@@ -59,7 +59,8 @@ NSInteger const NKSocketStreamBufferSize = 100 * 1024;
         NSLog(@"read error %d", errno);
         return [NSString string];
     }
-    return [NSString stringWithUTF8String:buffer];
+    NSString *result = [NSString stringWithUTF8String:buffer];
+    return result;
 }
 
 - (void)close {

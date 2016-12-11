@@ -17,9 +17,12 @@
     return ^(NKHTTPRequest *request) {
         NKSocketStream *socket = [[NKSocketStream alloc] initWithHost:request.host port:request.port];
         [socket write:request.rawValue.UTF8String];
-//        NSLog(@"%@", [socket read]);
         NKHTTPResponse *response = [[NKHTTPResponse alloc] init];
-        [response appendMessage:[socket read]];
+        while (![response appendMessage:[socket read]]) {
+
+        }
+        NSLog(@"%lu", (unsigned long)response.body.length);
+
         return self;
     };
 }

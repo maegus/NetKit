@@ -26,7 +26,7 @@
 
 - (void)testExample {
     XCTestExpectation *exception = [self expectationWithDescription:@"testExample"];
-    NKHTTPRequest *request = [[NKHTTPRequest alloc] initWithURL:@"http://www.baidu.com/index.html"];
+    NKHTTPRequest *request = [[NKHTTPRequest alloc] initWithURL:@"http://www.tictalkin.com/"];
 
     NKHTTPClient *client = [[NKHTTPClient alloc] init];
     client.newCall(request);
