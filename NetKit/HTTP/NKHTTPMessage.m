@@ -8,6 +8,29 @@
 
 #import "NKHTTPMessage.h"
 
+@interface NKHTTPMessageHelper: NSObject
+
+@end
+
+@implementation NKHTTPMessageHelper
+
++ (NSString *)nextLine:(NSString *)message {
+    return [NKHTTPMessageHelper scanUpToString:@"\r\n\r\n" fromString:message];
+}
+
++ (NSString *)httpHeader:(NSString *)message {
+    return [NKHTTPMessageHelper scanUpToString:@"\r\n\r\n" fromString:message];
+}
+
++ (NSString *)scanUpToString:(NSString *)upToString fromString:(NSString *)message {
+    NSString *result = nil;
+    NSScanner *scanner = [[NSScanner alloc] initWithString:message];
+    [scanner scanUpToString:upToString intoString:&result];
+    return result;
+}
+
+@end
+
 @interface NKHTTPMessage ()
 
 @property (nonatomic, copy) NSMutableString *plainMessage;
@@ -16,6 +39,8 @@
 @property (nonatomic, strong) NSNumber *version;
 @property (nonatomic, strong) NSNumber *statusCode;
 @property (nonatomic, strong) NSString *reasonMessage;
+
+@property (nonatomic, strong) NSString *httpHeader;
 
 @end
 
@@ -31,8 +56,15 @@
 
 - (void)appendMessage:(NSString *)message {
     [self.plainMessage appendString:message];
-    [self nextLine];
-    [self nextLine];
+
+    if (self.httpHeader) {
+        NSLog(@"%@", self.httpHeader);
+        [self parseHTTPHeader];
+    }
+}
+
+- (void)parseHTTPHeader {
+
 }
 
 - (NSString *)nextLine {
@@ -47,6 +79,13 @@
     NSLog(@"%@", result);
     self.index += result.length;
     return result;
+}
+
+- (NSString *)httpHeader {
+    if (!_httpHeader) {
+        _httpHeader = [NKHTTPMessageHelper httpHeader:self.plainMessage];
+    }
+    return _httpHeader;
 }
 
 @end
