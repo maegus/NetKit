@@ -17,7 +17,7 @@
 
 - (void)write:(const char *)data;
 
-- (NSString *)read;
+- (NSData *)read;
 
 - (void)close;
 

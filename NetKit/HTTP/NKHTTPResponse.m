@@ -33,7 +33,8 @@
 
 @interface NKHTTPResponse ()
 
-@property (nonatomic, copy) NSMutableString *plainMessage;
+@property (nonatomic, copy) NSMutableData *rawData;
+@property (nonatomic, copy) NSMutableString *rawUTF8String;
 
 @property (nonatomic, strong) NSString *version;
 @property (nonatomic, assign, readwrite) NSUInteger statusCode;
@@ -47,28 +48,31 @@
 
 @implementation NKHTTPResponse {
     BOOL _parsedHeader;
+    NSString *_rawHTTPHeader;
 }
 
 - (instancetype)init {
     if (self = [super init]) {
-        _plainMessage = [[NSMutableString alloc] init];
+        _rawData = [[NSMutableData alloc] init];
+        _rawUTF8String = [[NSMutableString alloc] init];
         _parsedHeader = NO;
     }
     return self;
 }
 
-- (BOOL)appendMessage:(NSString *)message {
-    if (message == nil) {
-        return NO;
-    }
-    [self.plainMessage appendString:message];
+- (BOOL)appendData:(NSData *)data {
+    if (!data) return NO;
+
+    [self.rawData appendData:data];
+    NSString *rawUTF8String = [[NSString alloc] initWithData:data
+                                                    encoding:NSUTF8StringEncoding];
+    [self.rawUTF8String appendString:rawUTF8String];
 
     @synchronized (self) {
         // Parse until received http header.
         if (![self parseHTTPHeader]) return NO;
 
-        NSString *rawHTTPHeader = [NKHTTPHelper httpHeader:self.plainMessage];
-        NSString *body = [self.plainMessage substringFromIndex:rawHTTPHeader.length + 4];
+        NSString *body = [self.rawUTF8String substringFromIndex:_rawHTTPHeader.length + @"\r\n\r\n".length];
         NSData *data = [body dataUsingEncoding:NSUTF8StringEncoding];
         if (data.length >= self.contentLength) {
             self.body = [data subdataWithRange:NSMakeRange(0, self.contentLength)];
@@ -81,14 +85,14 @@
 - (BOOL)parseHTTPHeader {
     if (_parsedHeader) return YES;
 
-    NSString *rawHTTPHeader = [NKHTTPHelper httpHeader:self.plainMessage];
-    if (!rawHTTPHeader) {
+    _rawHTTPHeader = [NKHTTPHelper httpHeader:self.rawUTF8String];
+    if (!_rawHTTPHeader) {
         return NO;
     }
 
     // start-line, ex: HTTP/1.1 200 OK
     NSString *statusLine = [NKHTTPHelper scanUpToString:@"\r\n"
-                                             fromString:rawHTTPHeader];
+                                             fromString:_rawHTTPHeader];
 //    NSLog(@"status-line: %@", statusLine);
 
     NSString *pattern = @"^HTTP/([0-9].[0-9])[\t ]([0-9]{3,3})[\t ]([a-zA-Z0-9]*)$";
@@ -113,21 +117,21 @@
 
 
     // header-field
-    rawHTTPHeader = [rawHTTPHeader substringFromIndex:statusLine.length];
+    NSString *rawHeaderFields = [_rawHTTPHeader substringFromIndex:statusLine.length];
     NSArray *headerFields = [[NKHTTPHelper scanUpToString:@"\r\n\r\n"
-                                               fromString:rawHTTPHeader]
+                                               fromString:rawHeaderFields]
                              componentsSeparatedByString:@"\r\n"];
-    NSLog(@"header-fields: %@", headerFields);
+//    NSLog(@"header-fields: %@", headerFields);
 
     NSMutableDictionary *tempHeaderFields = [[NSMutableDictionary alloc] init];
     for (NSString *headerField in headerFields) {
         NSString *fieldName = [NKHTTPHelper scanUpToString:@":"
                                                 fromString:headerField];
 
-            // Add 1 to remove previous colon.
+        // Add @":".length == 1 to remove previous colon.
         NSString *fieldValue = [headerField substringFromIndex:fieldName.length + 1];
 
-            // remove leading and trailing OWS in field value.
+        // remove leading and trailing OWS in field value.
         fieldValue = [fieldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if ([fieldName isEqualToString:@"Set-Cookie"])
             continue;

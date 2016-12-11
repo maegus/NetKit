@@ -52,15 +52,14 @@ NSInteger const NKSocketStreamBufferSize = 100 * 1024;
     write(_sockfd, data, strlen(data));
 }
 
-- (NSString *)read {
+- (NSData *)read {
     char buffer[NKSocketStreamBufferSize];
     NSInteger count = 0;
     if ( (count = read(_sockfd, buffer, sizeof(buffer))) < 0) {
         NSLog(@"read error %d", errno);
-        return [NSString string];
+        return nil;
     }
-    NSString *result = [NSString stringWithUTF8String:buffer];
-    return result;
+    return [[NSData alloc] initWithBytes:buffer length:count];
 }
 
 - (void)close {

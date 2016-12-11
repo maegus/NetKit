@@ -10,7 +10,7 @@
 
 @interface NKHTTPResponse : NSObject
 
-- (BOOL)appendMessage:(NSString *)message;
+- (BOOL)appendData:(NSData *)data;
 
 @property (nonatomic, assign, readonly) NSUInteger statusCode;
 @property (nonatomic, strong, readonly) NSString *reasonPhrase;
