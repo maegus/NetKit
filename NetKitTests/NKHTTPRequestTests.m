@@ -28,6 +28,8 @@
     XCTestExpectation *exception = [self expectationWithDescription:@"testExample"];
     NKHTTPRequest *request = [[NKHTTPRequest alloc] initWithURL:@"http://www.tictalkin.com/"];
 
+    NSLog(@"%@", request.rawValue);
+
     NKHTTPClient *client = [[NKHTTPClient alloc] init];
     client.newCall(request);
 

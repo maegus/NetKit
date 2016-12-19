@@ -63,17 +63,31 @@
 - (BOOL)appendData:(NSData *)data {
     if (!data) return NO;
 
+    NSUInteger bytesCount = data.length;
+    const char *bytes = data.bytes;
+    for (int i = 0; i < bytesCount;) {
+        unsigned char firstByte = bytes[i];
+        unsigned char secondByte = bytes[i+1];
+        if (firstByte == 0x0D && secondByte == 0x0A) {
+            printf("%02X:%02X:%02X:%02X\n", (unsigned char)bytes[i],(unsigned char)bytes[i+1],(unsigned char)bytes[i+2],(unsigned char)bytes[i+3]);
+        }
+        i += 2;
+    }
+    NSLog(@"%lu %lu", (unsigned long)bytesCount, data.length);
+
     [self.rawData appendData:data];
     NSString *rawUTF8String = [[NSString alloc] initWithData:data
-                                                    encoding:NSUTF8StringEncoding];
+                                                    encoding:NSUTF8StringEncoding] ?: @"";
     [self.rawUTF8String appendString:rawUTF8String];
 
     @synchronized (self) {
         // Parse until received http header.
         if (![self parseHTTPHeader]) return NO;
 
+        // TODO: performace problem.
         NSString *body = [self.rawUTF8String substringFromIndex:_rawHTTPHeader.length + @"\r\n\r\n".length];
         NSData *data = [body dataUsingEncoding:NSUTF8StringEncoding];
+
         if (data.length >= self.contentLength) {
             self.body = [data subdataWithRange:NSMakeRange(0, self.contentLength)];
             return YES;
@@ -121,7 +135,7 @@
     NSArray *headerFields = [[NKHTTPHelper scanUpToString:@"\r\n\r\n"
                                                fromString:rawHeaderFields]
                              componentsSeparatedByString:@"\r\n"];
-//    NSLog(@"header-fields: %@", headerFields);
+    NSLog(@"header-fields: %@", headerFields);
 
     NSMutableDictionary *tempHeaderFields = [[NSMutableDictionary alloc] init];
     for (NSString *headerField in headerFields) {
@@ -133,8 +147,7 @@
 
         // remove leading and trailing OWS in field value.
         fieldValue = [fieldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        if ([fieldName isEqualToString:@"Set-Cookie"])
-            continue;
+        if ([fieldName isEqualToString:@"Set-Cookie"]) continue;
         [tempHeaderFields setValue:fieldValue forKey:fieldName];
     }
     self.headerFields = [tempHeaderFields mutableCopy];
@@ -146,6 +159,12 @@
 - (NSUInteger)contentLength {
     id value = [self.headerFields valueForKey:@"Content-Length"];
     return value ? [value integerValue] : 0;
+}
+
+- (NSString *)transferEncoding {
+    // TODO: multiple Transfer-Encoding
+    NSString *value = [self.headerFields valueForKey:@"Transfer-Encoding"];
+    return value;
 }
 
 @end
