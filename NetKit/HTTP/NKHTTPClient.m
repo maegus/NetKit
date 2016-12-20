@@ -22,6 +22,7 @@
 
         }
         NSLog(@"%lu", (unsigned long)response.body.length);
+        NSLog(@"%@", [NSString stringWithUTF8String:response.body.bytes]);
 
         return self;
     };

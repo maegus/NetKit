@@ -34,7 +34,6 @@
 @interface NKHTTPResponse ()
 
 @property (nonatomic, copy) NSMutableData *rawData;
-@property (nonatomic, copy) NSMutableString *rawUTF8String;
 
 @property (nonatomic, strong) NSString *version;
 @property (nonatomic, assign, readwrite) NSUInteger statusCode;
@@ -49,60 +48,71 @@
 @implementation NKHTTPResponse {
     BOOL _parsedHeader;
     NSString *_rawHTTPHeader;
+
+    NSUInteger _index;
+    NSUInteger _headerEndIndex;
+    NSUInteger _bodyStartIndex;
 }
 
 - (instancetype)init {
     if (self = [super init]) {
         _rawData = [[NSMutableData alloc] init];
-        _rawUTF8String = [[NSMutableString alloc] init];
         _parsedHeader = NO;
+        _index = 0;
+        _headerEndIndex = 0;
+        _bodyStartIndex = 0;
     }
     return self;
 }
 
-- (BOOL)appendData:(NSData *)data {
-    if (!data) return NO;
-
-    NSUInteger bytesCount = data.length;
-    const char *bytes = data.bytes;
-    for (int i = 0; i < bytesCount;) {
-        unsigned char firstByte = bytes[i];
-        unsigned char secondByte = bytes[i+1];
-        if (firstByte == 0x0D && secondByte == 0x0A) {
-            printf("%02X:%02X:%02X:%02X\n", (unsigned char)bytes[i],(unsigned char)bytes[i+1],(unsigned char)bytes[i+2],(unsigned char)bytes[i+3]);
-        }
-        i += 2;
-    }
-    NSLog(@"%lu %lu", (unsigned long)bytesCount, data.length);
-
+- (void)parse:(NSData *)data {
     [self.rawData appendData:data];
-    NSString *rawUTF8String = [[NSString alloc] initWithData:data
-                                                    encoding:NSUTF8StringEncoding] ?: @"";
-    [self.rawUTF8String appendString:rawUTF8String];
+
+    if (_headerEndIndex) return;
+
+    NSUInteger bytesCount = self.rawData.length;
+    const char *bytes = self.rawData.bytes;
+    for (; _index < bytesCount; _index++) {
+        if (bytes[_index] == 0x0D &&
+            bytes[_index+1] == 0x0A &&
+            bytes[_index+2] == 0x0D &&
+            bytes[_index+3] ) {
+            printf("%02X:%02X:%02X:%02X\n",
+                   (unsigned char)bytes[_index],
+                   (unsigned char)bytes[_index+1],
+                   (unsigned char)bytes[_index+2],
+                   (unsigned char)bytes[_index+3]
+                   );
+            _headerEndIndex = _index - 1;
+            _bodyStartIndex = _index + 4;
+            NSData *headerData = [self.rawData subdataWithRange:NSMakeRange(0, _headerEndIndex)];
+            [self parseHTTPHeader:headerData];
+        }
+    }
+}
+
+- (BOOL)appendData:(NSData *)data {
+    [self parse:data];
+
+    if (!_headerEndIndex) return NO;
 
     @synchronized (self) {
         // Parse until received http header.
-        if (![self parseHTTPHeader]) return NO;
 
         // TODO: performace problem.
-        NSString *body = [self.rawUTF8String substringFromIndex:_rawHTTPHeader.length + @"\r\n\r\n".length];
-        NSData *data = [body dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *data = [self.rawData subdataWithRange:NSMakeRange(_bodyStartIndex, self.rawData.length - _bodyStartIndex)];
 
         if (data.length >= self.contentLength) {
             self.body = [data subdataWithRange:NSMakeRange(0, self.contentLength)];
             return YES;
         }
     }
+
     return NO;
 }
 
-- (BOOL)parseHTTPHeader {
-    if (_parsedHeader) return YES;
-
-    _rawHTTPHeader = [NKHTTPHelper httpHeader:self.rawUTF8String];
-    if (!_rawHTTPHeader) {
-        return NO;
-    }
+- (void)parseHTTPHeader:(NSData *)headerData {
+    _rawHTTPHeader = [NSString stringWithUTF8String:headerData.bytes];
 
     // start-line, ex: HTTP/1.1 200 OK
     NSString *statusLine = [NKHTTPHelper scanUpToString:@"\r\n"
@@ -129,7 +139,6 @@
         self.reasonPhrase = [statusLine substringWithRange:reasonPhraseRange];
     }
 
-
     // header-field
     NSString *rawHeaderFields = [_rawHTTPHeader substringFromIndex:statusLine.length];
     NSArray *headerFields = [[NKHTTPHelper scanUpToString:@"\r\n\r\n"
@@ -151,9 +160,6 @@
         [tempHeaderFields setValue:fieldValue forKey:fieldName];
     }
     self.headerFields = [tempHeaderFields mutableCopy];
-
-    _parsedHeader = YES;
-    return YES;
 }
 
 - (NSUInteger)contentLength {
